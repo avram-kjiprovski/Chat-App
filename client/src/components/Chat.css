@@ -1,0 +1,32 @@
+.rooms {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid aliceblue;
+    border-radius: 5px;
+}
+
+.rooms li {
+    list-style: none;
+    cursor: pointer;
+}
+
+.roomMessages{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid aliceblue;
+    border-radius: 5px;
+    justify-content: space-between;
+    
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: auto;
+    gap: 3px;
+    grid-template-areas: 
+        "rooms" "roomMessages";
+    height: 99vh;
+    scroll-behavior: smooth;
+    color: aliceblue !important;
+}
