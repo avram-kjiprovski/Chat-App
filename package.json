@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/avram-kjiprovski/Chat-App#readme",
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.8",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
