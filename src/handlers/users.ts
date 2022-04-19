@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/User';
 import { createToken } from '../middlewares/jwt';
 
-const loginUser = async (req, res, next) => {
+export const loginUser = async (req, res, next) => {
     const userInfo = req.body;
 
     if(!userInfo.username || !userInfo.password) {
@@ -34,7 +34,7 @@ const loginUser = async (req, res, next) => {
     }
 };
 
-const createUser = async (req, res, next) => {
+export const createUser = async (req, res, next) => {
     const userInfo = req.body;
 
     if(!userInfo.username || userInfo.username.length < 6){
@@ -58,7 +58,7 @@ const createUser = async (req, res, next) => {
 
         const encryptedPassword = await bcrypt.hash(
             userInfo.password,
-            process.env.SALT_ROUNDS
+            parseInt(process.env.SALT_ROUNDS)
         );
 
         const newUser = {
@@ -69,6 +69,6 @@ const createUser = async (req, res, next) => {
         await User.create(newUser)
         return res.status(201).json('User created');
     } catch (error) {
-        return res.status(500).json(error);
+        return res.status(500).json(`Error: ${error}`);
     }
 }

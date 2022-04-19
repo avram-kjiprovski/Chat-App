@@ -30,9 +30,3 @@ export const jwtMiddleware = async (req, res, next) => {
         return res.status(401).json(error);
     }
 }
-
-// export default {
-//     createToken,
-//     decodeToken,
-//     jwtMiddleware
-// }
