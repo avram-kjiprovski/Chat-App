@@ -1,0 +1,38 @@
+.Login {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 1rem;
+
+    .MuiBox-root{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin: auto;
+        min-width: 99%;
+
+        transition: all .3s ease-in-out;
+    }
+
+    Link {
+        text-decoration: none;
+        color: inherit;
+    }
+}
+
+@media(min-width: 540px){
+    .Login{
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 1fr;
+        justify-content: center;
+
+        .MuiBox-root{
+            grid-column: 2;
+            min-width: 25vw;
+            transition: all .3s ease-in-out;
+        }
+    }
+}

@@ -1,41 +1,85 @@
 .App {
+  display: grid;
+  border: 1px solid #282c34;
   text-align: center;
-  background-color: #282c34;
-  min-height: 100vh;
-  color: aliceblue;
+  background-color: aliceblue;
+  color: #282c34;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.Chat-Container{
+  display: flex;
+  justify-content: center;
+  min-height: 99vh;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.Chat-Box {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  min-width: 50%;
+  height: 100%;
+  border: 1px solid #bbc0ca;
+  border-top: none;
+  border-bottom: none;
+}
+
+.Message p{
+  display: block;
+  margin: 5px;
+  padding: 5px;
+  width: auto;
+}
+
+.Chat-My-Message{
+  background-color: rgb(155, 188, 216);
+  color: rgb(255, 255, 255);
+  text-align: end;
+  border-right: 1px solid #707888;
+}
+
+.Chat-Message{
+  text-align: left;
+  color: #282c34;
+  border-left: 1px solid #99a2b3;
+  background-color: #d8e1f1;
+}
+
+.Chat-New-Message{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 5px;
+  margin: 5px;
+  padding: 5px;
+}
+.Chat-New-Message input{
+  flex-grow: 1;
+  border: 1px solid #bbc0ca;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.Title {
+  background-color: #282c34;
+  color: #bbc0ca;
+  width: 100%;
+}
+
+.Rooms-Container {
+  display: flex;
+  flex-direction: column;
+  min-width: 20%;
+  border: 1px solid #bbc0ca;
+  border-top: none;
+  border-bottom: none;
+}
+
+.Room {
+  display: flex;
+  flex-direction: row;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  align-items: baseline;
+  gap: 5px;
+  background-color: #d8e1f1;
+  border-bottom: 1px solid #bbc0ca;
 }

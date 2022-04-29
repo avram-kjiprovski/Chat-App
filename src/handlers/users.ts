@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User';
 import { createToken } from '../middlewares/jwt';
+import { debug } from 'console';
 
 export const loginUser = async (req, res, next) => {
     const userInfo = req.body;
@@ -25,7 +26,13 @@ export const loginUser = async (req, res, next) => {
 
         if(passwordComparison){
             const newToken = createToken(userInfo.username);
-            return res.status(200).json(newToken);
+
+            return res
+                .cookie('token', newToken, {
+                    httpOnly: true
+                })
+                .status(200)                
+                .json(userInDB);
         } else {
             return res.status(401).json('Wrong password');
         }
@@ -71,4 +78,32 @@ export const createUser = async (req, res, next) => {
     } catch (error) {
         return res.status(500).json(`Error: ${error}`);
     }
+}
+
+export const userJoinRoom = async (req, res, next) => {
+    const { username, roomName } = req.body;
+
+    try {
+        const user = await User.findOne({
+            username
+        });
+
+        if(!user) return res.status(400).json('You do not exist.');
+
+        const room = await user.rooms.find(room => room.name === roomName);
+
+        if(!room) {
+            user.rooms.push({
+                name: roomName,
+                messages: []
+            });
+        }
+
+        await user.save();
+
+        return res.status(200).json('User joined room');
+    } catch (error) {
+        return res.status(500).json("Handler -> userJoinRoom: \n", error);
+    }
+
 }
