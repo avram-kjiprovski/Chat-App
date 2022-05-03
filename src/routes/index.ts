@@ -1,6 +1,6 @@
 import express from 'express';
 import {loginUser, createUser} from '../handlers/users';
-import {createRoom } from '../handlers/rooms';
+import {createRoom, getRooms } from '../handlers/rooms';
 import {message} from '../handlers/messages';
 import { jwtMiddleware } from '@/middlewares/jwt';
 
@@ -14,6 +14,7 @@ router.post(`/${PREFIX}/register`, createUser);
 
 // Rooms
 router.post(`/${PREFIX}/createRoom`, createRoom);
+router.get(`/${PREFIX}/rooms`, getRooms);
 
 // Messages
 router.post(`/${PREFIX}/message`, message);
