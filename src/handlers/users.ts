@@ -5,6 +5,7 @@ import { debug } from 'console';
 
 export const loginUser = async (req, res, next) => {
     const userInfo = req.body;
+    console.log(req.headers.cookie)
 
     if(!userInfo.username || !userInfo.password) {
         return res.status(400).json({

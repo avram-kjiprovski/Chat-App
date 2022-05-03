@@ -11,7 +11,8 @@ import {createRoom} from './handlers/rooms'
 const PORT = process.env.PORT;
 
 const server = http.createServer(app)
-const io = new socketio(server, {
+
+export const io = new socketio(server, {
     cors: {
         origin: '*',
     }
@@ -24,22 +25,22 @@ dbConnector()
         io.on('connection', socket => {
             // console.log("Connected");
 
-            socket.on("disconnect", () => {
-                console.log("Client disconnected");
-            });
+            // socket.on("disconnect", () => {
+            //     console.log("Client disconnected");
+            // });
 
-            socket.on("message", msg => {
-                console.log("Message: " + msg);
-                io.emit("message", msg);
-            });
+            // socket.on("message", msg => {
+            //     console.log("Message: " + msg);
+            //     io.emit("message", msg);
+            // });
 
-            socket.on('createRoom', room => {
-                createRoom(room).then(
-                    room => {
-                        socket.emit('roomCreated', room);
-                    }
-                )
-            })
+            // socket.on('createRoom', room => {
+            //     createRoom(room).then(
+            //         room => {
+            //             socket.emit('roomCreated', room);
+            //         }
+            //     )
+            // })
 
             
         })

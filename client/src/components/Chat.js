@@ -1,6 +1,26 @@
-
+import { useState } from 'react';
+import {SERVER} from './constants'
 
 export const Chat = () => {
+
+  const [message, setMessage] = useState('')
+
+  const handleSendMessage = async () => {
+    const res = await fetch(`${SERVER}/message`, {
+      method: "POST",
+      withcredentials: true,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: message,
+      }),
+    });
+
+    
+  }
+
   return (
     <div className="Chat-Box">
       <div className="Title">
@@ -22,8 +42,14 @@ export const Chat = () => {
         </div>
 
         <div className="Chat-New-Message">
-          <input placeholder="Your text here..."></input>
-          <button>Send</button>
+          <input placeholder="Your text here..." value={message} onChange={(e) => {
+            setMessage(e.target.value)
+          }}></input>
+          <button onClick={
+            () => {
+              handleSendMessage()
+            }
+          }>Send</button>
         </div>
 
       </div>
