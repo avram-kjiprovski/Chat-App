@@ -27,12 +27,23 @@ export const Rooms = ({ socket, me }) => {
     getRooms();
   }, []);
 
-  const handleJoinRoom = (room) => {
-    console.log(room);
+  const handleJoinRoom = async (room) => {
+    console.log(room._id)
+    const res = await fetch(`${SERVER}/rooms/${room._id}/join`, {
+      method: "GET",
+      withcredentials: true,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        },
+    });
+
+    const data = await res.json();
+    console.log(data)
   };
 
   const handleCreateRoom = async (rooms) => {
-    
+
     const res = await fetch(`${SERVER}/createRoom`, {
       method: "POST",
       withcredentials: true,
@@ -45,7 +56,7 @@ export const Rooms = ({ socket, me }) => {
     const data = await res.json();
     console.log(data);
 
-    setRooms([...rooms, data]);
+    setRooms(data);
   };
 
   return (
@@ -58,6 +69,7 @@ export const Rooms = ({ socket, me }) => {
           return (
             <div className="Room" key={room._id}>
               <p>{room.name}</p>
+              {/* napravi uslov kajsto ako korisnikot e vo taa soba nema da ima button */}
               <button
                 onClick={() => {
                   handleJoinRoom(room);

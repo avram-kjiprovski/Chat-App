@@ -15,7 +15,8 @@ export const createRoom = async (req, res) => {
     const room = await Room.create({
         name: `Room ${rooms.length + 1}`,
         createdBy: user._id,
-        messages: []
+        messages: [],
+        usersJoined: [user]
     });
     rooms = await Room.find({})
 
@@ -58,13 +59,13 @@ export const joinRoom = async (req, res) => {
         const room = await Room.findOne({
             _id: req.params.room_id
         });
+            
+        if(user.rooms.includes(room._id)) {
+            return res.status(200).json(room);
+        }
+        user.rooms.push(room._id);
 
-        room.users.push(user._id);
-        await room.save();
-
-        const rooms = await Room.find({});
-        
-        return res.status(200).json(rooms);
+        return res.status(200).json(room);
     } catch (error) {
         return res.status(500).json('Server error.');    
     }
