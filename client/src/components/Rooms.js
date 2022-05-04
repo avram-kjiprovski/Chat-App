@@ -7,9 +7,8 @@ export const Rooms = ({ socket, me }) => {
 
   const [rooms, setRooms] = useState([]);
 
-  useEffect(async () => {
-
-    const res = await fetch(`${SERVER}/rooms`, {
+  const getRooms = async () => {
+      const res = await fetch(`${SERVER}/rooms`, {
       method: "GET",
       withcredentials: true,
       credentials: "include",
@@ -21,6 +20,11 @@ export const Rooms = ({ socket, me }) => {
     
     setRooms(data);
     console.log(data)
+    
+  }
+
+  useEffect( () => {
+    getRooms();
   }, []);
 
   const handleJoinRoom = (room) => {
@@ -28,19 +32,7 @@ export const Rooms = ({ socket, me }) => {
   };
 
   const handleCreateRoom = async (rooms) => {
-    // const newRoom = {
-    //   name: `Room ${rooms.length + 1}`,
-    //   messages: [],
-    //   createdBy: me.username,
-    // };
-    // setRooms([...rooms, newRoom]);
-
-    // // console.log(socket)
-    // socket.emit("createRoom", newRoom);
-    // socket.on("roomCreated", (room) => {
-    //   console.log(room);
-    // });
-
+    
     const res = await fetch(`${SERVER}/createRoom`, {
       method: "POST",
       withcredentials: true,

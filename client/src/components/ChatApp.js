@@ -7,7 +7,6 @@ import { userDetailsContext } from "../App";
 
 export const ChatApp = () => {
     const [userDetails, setUserDetails] = useContext(userDetailsContext);
-    console.log(userDetails);
 
     const socket = io("http://localhost:8000", {
       cookie: {
