@@ -56,14 +56,14 @@ export const joinRoom = async (req, res) => {
         }   
 
         const room = await Room.findOne({
-            name: `Room ${req.params.roomNumber}`
+            _id: req.params.room_id
         });
 
         room.users.push(user._id);
         await room.save();
 
         const rooms = await Room.find({});
-
+        
         return res.status(200).json(rooms);
     } catch (error) {
         return res.status(500).json('Server error.');    
