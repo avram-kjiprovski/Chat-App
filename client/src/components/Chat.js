@@ -18,6 +18,9 @@ export const Chat = () => {
       }),
     });
 
+    const data = await res.json();
+    console.log("Chat: ", data)
+
     
   }
 
@@ -25,7 +28,6 @@ export const Chat = () => {
     <div className="Chat-Box">
       <div className="Title">
         <h3>Selected Room Name</h3>
-        {/* horizontal rule or border or w/e */}
       </div>
       
       <div className="Chat-Messages">

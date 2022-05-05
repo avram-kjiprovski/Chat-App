@@ -4,9 +4,7 @@ import http from 'http'
 import app from './app'
 import dbConnector from './config'
 import {Server as socketio} from 'socket.io'
-
-// privremeno
-import {createRoom} from './handlers/rooms'
+import Logger from './logger/logger';
 
 const PORT = process.env.PORT;
 
@@ -23,14 +21,13 @@ dbConnector()
     .then(() => {
 
         io.on('connection', socket => {
-            // console.log("Connected");
+            
 
             // socket.on("disconnect", () => {
             //     console.log("Client disconnected");
             // });
 
             // socket.on("message", msg => {
-            //     console.log("Message: " + msg);
             //     io.emit("message", msg);
             // });
 

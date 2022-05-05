@@ -2,9 +2,10 @@ import { useState, useContext, useEffect } from "react";
 import { userDetailsContext } from "../App";
 import { SERVER } from "./constants";
 
-export const Rooms = ({ socket, me }) => {
-  const [userDetails, setUserDetails] = useContext(userDetailsContext);
-
+export const Rooms = () => {
+  const [userDetails, setUserDetails] = useState(
+    localStorage.getItem("userDetails")
+  );
   const [rooms, setRooms] = useState([]);
 
   const getRooms = async () => {
@@ -67,21 +68,29 @@ export const Rooms = ({ socket, me }) => {
       <div className="Rooms">
         {rooms.map((room, index) => {
           return (
-            <div className="Room" key={room._id}>
+            <div
+              className={`Room ${index === 0 ? "selected" : ""}`}
+              key={room._id}
+            >
               <p>{room.name}</p>
-              {/* napravi uslov kajsto ako korisnikot e vo taa soba nema da ima button */}
-              <button
-                onClick={() => {
-                  handleJoinRoom(room);
-                }}
-              >
-                Join
-              </button>
+              {room.usersJoined.includes(
+                JSON.parse(localStorage.getItem("userDetails"))._id
+              ) ? (
+                ""
+              ) : (
+                <button
+                  onClick={() => {
+                    handleJoinRoom(room);
+                  }}
+                >
+                  Join
+                </button>
+              )}
             </div>
           );
         })}
         <div className="Create-New-Room">
-          {/* Button or whatever for new room */}
+
           <button
             onClick={() => {
               handleCreateRoom(rooms);

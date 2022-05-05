@@ -83,3 +83,8 @@
   background-color: #d8e1f1;
   border-bottom: 1px solid #bbc0ca;
 }
+
+.selected {
+  background-color: #81ade0;
+  box-shadow: inset 0 0 4px 1px #e7efff;
+}

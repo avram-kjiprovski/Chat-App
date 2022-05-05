@@ -6,18 +6,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { userDetailsContext } from "../App";
 
 export const Login = () => {
-  const [userDetails, setUserDetails] = useContext(userDetailsContext);
+  // const [userDetails, setUserDetails] = useContext(userDetailsContext);
 
-  const [username, setUsername] = useState(userDetails.username);
-  const [password, setPassword] = useState(userDetails.password);
-  const [loggedIn, setLoggedIn] = useState(userDetails.loggedIn);
+  const [username, setUsername] = useState(localStorage.getItem("username") || "");
+  const [password, setPassword] = useState("");
+  // const [loggedIn, setLoggedIn] = useState(userDetails.loggedIn); // this needs to be eh localstorage man
 
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
 
-
-    fetch(`${SERVER}/login`, {
+    // refactor fetch
+    const res = await fetch(`${SERVER}/login`, {
       method: "POST",
       withcredentials: true,
       credentials: "include",
@@ -28,33 +28,21 @@ export const Login = () => {
         username: username,
         password: password,
       }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        // console.log(data);
-        if (data.username === username) {
-          setUserDetails({
-            _id: data._id,
-            username: username,
-            password: password,
-            loggedIn: true,
-            rooms: data.rooms,
-          })
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      });
+    });
+
+    const data = await res.json();
+
+    if (data.username === username) {
+      localStorage.setItem("userDetails", JSON.stringify(data));
+    }
   };
 
   useEffect(() => {
-    if(userDetails.loggedIn) {
-      console.log(userDetails);
+    const userDetails = localStorage.getItem("userDetails")
+    if(userDetails) {
       return navigate('/chat')
     }
-  }, [userDetails]);
+  }, []);
 
   return (
     <div className="Login">

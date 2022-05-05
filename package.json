@@ -26,7 +26,8 @@
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.11",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "winston": "^3.7.2"
   },
   "devDependencies": {
     "@types/agenda": "^2.0.9",
