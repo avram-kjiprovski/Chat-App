@@ -1,6 +1,7 @@
 import Room from '../models/Room';
 import User from '../models/User';
 import { decodeToken } from '../middlewares/jwt';
+import Logger from '@/logger/logger';
 
 export const createRoom = async (req, res) => {
 
@@ -26,6 +27,7 @@ export const createRoom = async (req, res) => {
 
 export const getRooms = async (req, res) => {
     const decoded: Object | any = decodeToken(req.cookies.token);
+    Logger.info('Getting rooms');
 
     try {
         // check if user is really them

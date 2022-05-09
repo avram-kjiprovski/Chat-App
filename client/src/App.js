@@ -8,27 +8,25 @@ import {
   Route
 } from "react-router-dom";
 
-export const userDetailsContext = createContext();
+export const appDetailsContext = createContext();
 
 const App = () => {
-  const [userDetails, setUserDetails] = useState({
-    _id: "",
-    username: "",
-    password: "",
-    loggedIn: false,
+  const [appDetails, setAppDetails] = useState({
+    username: '',
+    user_id: '',
+    selectedRoom_id: '',
     rooms: [],
   });
-
   
   return (
-    <userDetailsContext.Provider value={[userDetails, setUserDetails]}>
-    <div className="App">
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/chat" element={<ChatApp />} />
-      </Routes>
-    </div>
-    </userDetailsContext.Provider>
+    <appDetailsContext.Provider value={[appDetails, setAppDetails]}>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/chat" element={<ChatApp />} />
+        </Routes>
+      </div>
+    </appDetailsContext.Provider>
   );
 };
 

@@ -29,7 +29,8 @@ export const loginUser = async (req, res, next) => {
 
             return res
                 .cookie('token', newToken, {
-                    httpOnly: true
+                    httpOnly: true,
+                    maxAge: 10800000,
                 })
                 .status(200)                
                 .json(userInDB);

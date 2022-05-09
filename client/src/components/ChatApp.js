@@ -1,28 +1,61 @@
-import {Rooms} from './Rooms';
-import {Chat} from './Chat';
-import {io} from 'socket.io-client';
-import {useState, useEffect, useContext} from 'react';
-import { userDetailsContext } from "../App";
-
+import { Rooms } from "./Rooms";
+import { Chat } from "./Chat";
+import { useState, useEffect, useContext } from "react";
+import { appDetailsContext } from "../App";
+import { socket } from "./socket";
+import { SERVER } from "./constants";
 
 export const ChatApp = () => {
-    const [userDetails, setUserDetails] = useContext(userDetailsContext);
+  const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  const [appDetails, setAppDetails] = useContext(appDetailsContext);
+  // fetch user rooms
+  const getRooms = async () => {
+    const res = await fetch(`${SERVER}/rooms`, {
+      method: "GET",
+      withcredentials: true,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await res.json();
 
-    const socket = io("http://localhost:8000", {
-      cookie: {
-        httpOnly: true,
-      }
+    // console.log("line 23 ChatApp: ", data);
+
+    localStorage.setItem("rooms", JSON.stringify(data));
+    localStorage.setItem("selectedRoom", data[0]._id);
+  };
+
+  useEffect(() => {
+    getRooms();
+    if (appDetails.username === "") {
+      setAppDetails({
+        username: JSON.parse(localStorage.getItem("userDetails")).username,
+        user_id: JSON.parse(localStorage.getItem("userDetails"))._id,
+        selectedRoom_id: JSON.parse(localStorage.getItem("rooms"))[0]._id,
+        rooms: JSON.parse(localStorage.getItem("rooms")),
+      });
+    }
+    console.log("ChatApp: ", appDetails);
+  }, [appDetails]);
+
+  if (appDetails.username != "") {
+    socket.on("connect", () => {
+      // send socket request to get room data
+      socket.emit("getRooms", (data) => {
+        console.log("socket getRooms: ", data);
+      });
     });
     
-    socket.on('connect', () => {
-      console.log("connected");
-    })
+    socket.on("message", (msg) => {
+      console.log(msg);
+    });
+  }
 
-
-    return (
-      <div className="Chat-Container">
-        <Rooms />
-        <Chat />
-      </div>
-    );
-}
+  return (
+    <div className="Chat-Container">
+      <Rooms />
+      <Chat />
+    </div>
+  );
+};

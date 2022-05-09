@@ -3,20 +3,17 @@ import { Box, TextField, Button } from "@mui/material";
 import "./Login.scss";
 import { SERVER } from "./constants";
 import { Link, useNavigate } from "react-router-dom";
-import { userDetailsContext } from "../App";
+import { appDetailsContext } from "../App";
 
 export const Login = () => {
-  // const [userDetails, setUserDetails] = useContext(userDetailsContext);
-
-  const [username, setUsername] = useState(localStorage.getItem("username") || "");
+  const [appDetails, setAppDetails] = useContext(appDetailsContext);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const [loggedIn, setLoggedIn] = useState(userDetails.loggedIn); // this needs to be eh localstorage man
 
   const navigate = useNavigate();
 
   const handleLogin = async () => {
 
-    // refactor fetch
     const res = await fetch(`${SERVER}/login`, {
       method: "POST",
       withcredentials: true,
@@ -32,17 +29,22 @@ export const Login = () => {
 
     const data = await res.json();
 
-    if (data.username === username) {
-      localStorage.setItem("userDetails", JSON.stringify(data));
+    if(data.username === username) { // if data has _id ?
+      setAppDetails({
+        username: data.username,
+        user_id: data._id,
+        selectedRoom_id: "",
+        rooms: [],
+      });
+      await localStorage.setItem("userDetails", JSON.stringify({
+        username: data.username,
+        _id: data._id,
+      }));
+      
+      navigate("/chat");
     }
-  };
 
-  useEffect(() => {
-    const userDetails = localStorage.getItem("userDetails")
-    if(userDetails) {
-      return navigate('/chat')
-    }
-  }, []);
+};
 
   return (
     <div className="Login">
@@ -58,9 +60,10 @@ export const Login = () => {
           }}
         />
         <TextField
-          id="standard-basic"
+          id="standard-password-input"
           label="Password"
           variant="standard"
+          type={"password"}
           autoComplete="off"
           value={password}
           onChange={(e) => {

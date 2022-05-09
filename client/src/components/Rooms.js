@@ -1,32 +1,22 @@
 import { useState, useContext, useEffect } from "react";
-import { userDetailsContext } from "../App";
+import { appDetailsContext } from "../App";
 import { SERVER } from "./constants";
+import { Button } from "@mui/material";
+
 
 export const Rooms = () => {
   const [userDetails, setUserDetails] = useState(
     localStorage.getItem("userDetails")
   );
-  const [rooms, setRooms] = useState([]);
 
-  const getRooms = async () => {
-      const res = await fetch(`${SERVER}/rooms`, {
-      method: "GET",
-      withcredentials: true,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        },
-    })
-    const data = await res.json();
-    
-    setRooms(data);
-    console.log(data)
-    
-  }
+  const [appDetails, setAppDetails] = useContext(appDetailsContext);
+  const [rooms, setRooms] = useState(appDetails.rooms);
+  const [selectedRoom, setSelectedRoom] = useState(appDetails.selectedRoom_id);
 
-  useEffect( () => {
-    getRooms();
-  }, []);
+  useEffect(() => {
+    setRooms(appDetails.rooms);
+    setSelectedRoom(appDetails.selectedRoom_id);
+  }, [appDetails])
 
   const handleJoinRoom = async (room) => {
     console.log(room._id)
@@ -40,8 +30,14 @@ export const Rooms = () => {
     });
 
     const data = await res.json();
-    console.log(data)
+    // console.log(data);
   };
+
+  const handleSelectRoom = (room) => {
+    console.log("selecting room: ", room._id);
+    setSelectedRoom(room._id);
+    localStorage.setItem("selectedRoom", room._id);
+  }
 
   const handleCreateRoom = async (rooms) => {
 
@@ -69,8 +65,11 @@ export const Rooms = () => {
         {rooms.map((room, index) => {
           return (
             <div
-              className={`Room ${index === 0 ? "selected" : ""}`}
+              className={`Room ${selectedRoom === room._id ? "selected" : ""}`} // what have I done?
               key={room._id}
+              onClick={() => {
+                handleSelectRoom(room);
+              }}
             >
               <p>{room.name}</p>
               {room.usersJoined.includes(
@@ -91,13 +90,15 @@ export const Rooms = () => {
         })}
         <div className="Create-New-Room">
 
-          <button
+          <Button
+            fullWidth
+            color="primary"
             onClick={() => {
               handleCreateRoom(rooms);
             }}
           >
             Create new Room
-          </button>
+          </Button>
         </div>
       </div>
     </div>
