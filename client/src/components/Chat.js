@@ -6,8 +6,6 @@ import { socket } from "./socket";
 export const Chat = () => {
   const [message, setMessage] = useState("");
   
-  // const userInfo = JSON.parse(localStorage.getItem("userDetails"));
-  
   const handleSendMessage = async () => {
 
     const data = {
@@ -17,9 +15,11 @@ export const Chat = () => {
       _id: JSON.parse(localStorage.getItem("userDetails"))._id,
     };
 
-    socket.emit("message", data, data);
+    socket.emit("message", data);
+    setMessage("");
 
-
+    
+    
   };
 
   return (

@@ -6,7 +6,7 @@ import { socket } from "./socket";
 import { SERVER } from "./constants";
 
 export const ChatApp = () => {
-  const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  // const userDetails = JSON.parse(localStorage.getItem("userDetails"));
   const [appDetails, setAppDetails] = useContext(appDetailsContext);
   // fetch user rooms
   const getRooms = async () => {
@@ -20,15 +20,13 @@ export const ChatApp = () => {
     });
     const data = await res.json();
 
-    // console.log("line 23 ChatApp: ", data);
-
-    localStorage.setItem("rooms", JSON.stringify(data));
-    localStorage.setItem("selectedRoom", data[0]._id);
+    await localStorage.setItem("rooms", JSON.stringify(data));
+    await localStorage.setItem("selectedRoom", data[0]._id);
   };
 
   useEffect(() => {
     getRooms();
-    if (appDetails.username === "") {
+    if (appDetails.username === "" || appDetails.selectedRoom_id === "") {
       setAppDetails({
         username: JSON.parse(localStorage.getItem("userDetails")).username,
         user_id: JSON.parse(localStorage.getItem("userDetails"))._id,

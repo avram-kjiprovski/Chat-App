@@ -54,7 +54,8 @@ export const io = new socketio(server, {
 
                 socket.on('message', (data) => {
                     console.log('Message: ', data);
-
+                    
+                    socket.join(data.room);
                     socket.to(data.room).emit('message', data.message);
                 })
                 
