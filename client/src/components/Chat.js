@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { SERVER } from "./constants";
 import { Button } from "@mui/material";
 import { socket } from "./socket";
@@ -7,20 +7,26 @@ import { appDetailsContext } from "../App";
 export const Chat = () => {
   const [message, setMessage] = useState("");
   const [appDetails, setAppDetails] = useContext(appDetailsContext);
-  
-  const handleSendMessage = async () => {
+  const [messages, setMessages] = useState([]);
 
+  useEffect( () => {
+    if(appDetails && appDetails.rooms.find(room => room._id === appDetails.selectedRoom_id) != undefined){
+      setMessages(
+        appDetails.rooms.find(room => room._id === appDetails.selectedRoom_id).messages
+      )
+    }
+  }, [appDetails]);
+
+  const handleSendMessage = async () => {
     const data = {
-      "eventName": "message",
+      eventName: "message",
       room: appDetails.selectedRoom_id,
       message: message,
-      // _id: JSON.parse(localStorage.getItem("userDetails"))._id,
       _id: appDetails.user_id,
     };
 
     socket.emit("message", data);
     setMessage("");
-
   };
 
   return (
@@ -30,7 +36,21 @@ export const Chat = () => {
       </div>
 
       <div className="Chat-Messages">
-        <div className="Chat-Message Message">
+        {/* Od tuka mapping */}
+        {
+          // if messages is not empty then map through it
+          messages.length > 0 ?
+          messages.map(message => {
+            return (
+              <div className={`${message.sentBy === appDetails.user_id ? 'Chat-My-Message' : 'Chat-Message'} Message`}>
+                <div className="Message-User">
+                  <p>{message.content}</p>
+                </div>
+              </div>
+              );
+        }) : <p>No messages</p> }
+
+        {/* <div className="Chat-Message Message">
           <p className="timestamp">
             <sub>11:32</sub>
           </p>
@@ -49,7 +69,7 @@ export const Chat = () => {
             <sub>11:32</sub>
           </p>
           <p>Who... Who are you?!</p>
-        </div>
+        </div> */}
 
         <div className="Chat-New-Message">
           <input

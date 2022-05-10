@@ -27,7 +27,6 @@ export const createRoom = async (req, res) => {
 
 export const getRooms = async (req, res) => {
     const decoded: Object | any = decodeToken(req.cookies.token);
-    Logger.info('Getting rooms');
 
     try {
         // check if user is really them
@@ -48,6 +47,7 @@ export const getRooms = async (req, res) => {
 
 export const joinRoom = async (req, res) => {
     const decoded: Object | any = decodeToken(req.cookies.token);
+    const room_id = req.params.room_id;
 
     try {
         const user = await User.findOne({
@@ -59,13 +59,15 @@ export const joinRoom = async (req, res) => {
         }   
 
         const room = await Room.findOne({
-            _id: req.params.room_id
+            _id: room_id
         });
             
-        if(user.rooms.includes(room._id)) {
+        if(room.usersJoined.includes(user._id)) {
             return res.status(200).json(room);
         }
-        user.rooms.push(room._id);
+
+        room.usersJoined.push(user._id);
+        await room.save();
 
         return res.status(200).json(room);
     } catch (error) {

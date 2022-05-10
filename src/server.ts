@@ -5,6 +5,7 @@ import app from './app'
 import dbConnector from './config'
 import {Server as socketio} from 'socket.io'
 import Logger from './logger/logger';
+import { writeMessageToDB } from './handlers/messages';
 
 
 import {decodeToken, jwtMiddleware} from './middlewares/jwt';
@@ -56,13 +57,13 @@ export const io = new socketio(server, {
 
                 })
 
-                socket.on('message', (data) => {
+                socket.on('message', async (data) => {
                     Logger.info(`Socket ${socket.id} sent message ${data}`);
 
-                    socket.to(data.room).emit('update', data.message);
+                    await socket.to(data.room).emit('update', data.message);
+                    const handlerReturn = await writeMessageToDB(data);
+                    console.log(handlerReturn)
                 })
-                
-                
 
             })
 

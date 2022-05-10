@@ -20,7 +20,7 @@ export const Rooms = () => {
   }, [appDetails])
 
   const handleJoinRoom = async (room) => {
-    console.log(room._id)
+
     const res = await fetch(`${SERVER}/rooms/${room._id}/join`, {
       method: "GET",
       withcredentials: true,
@@ -31,10 +31,22 @@ export const Rooms = () => {
     });
 
     const data = await res.json();
-    setAppDetails({
-      
-    })
-    // console.log(data);
+
+    if(res.status === 200) {
+
+      setAppDetails({
+        ...appDetails,
+        selectedRoom_id: room._id,
+        rooms: data.rooms,
+      });
+
+      setRooms(data.rooms);
+      setSelectedRoom(room._id);
+
+    }
+    
+
+    
   };
 
   const handleSelectRoom = (room) => {
@@ -69,7 +81,7 @@ export const Rooms = () => {
         <h3>Rooms:</h3>
       </div>
       <div className="Rooms">
-        {rooms.map((room, index) => {
+        {rooms && rooms.map((room, index) => {
           return (
             <div
               className={`Room ${selectedRoom === room._id ? "selected" : ""}`} // what have I done?
@@ -80,7 +92,7 @@ export const Rooms = () => {
             >
               <p>{room.name}</p>
               {room.usersJoined.includes(
-                JSON.parse(localStorage.getItem("userDetails"))._id
+                appDetails.user_id
               ) ? (
                 ""
               ) : (

@@ -1,7 +1,7 @@
 import express from 'express';
 import {loginUser, createUser} from '../handlers/users';
-import {createRoom, getRooms } from '../handlers/rooms';
-import {message} from '../handlers/messages';
+import {createRoom, getRooms, joinRoom } from '../handlers/rooms';
+// import {message} from '../handlers/messages';
 import { jwtMiddleware } from '@/middlewares/jwt';
 
 const router = express.Router();
@@ -15,10 +15,10 @@ router.post(`/${PREFIX}/register`, createUser);
 // Rooms
 router.post(`/${PREFIX}/createRoom`, createRoom);
 router.get(`/${PREFIX}/rooms`, getRooms);
-router.get(`/${PREFIX}/rooms/:room_id/join`, getRooms);
+router.get(`/${PREFIX}/rooms/:room_id/join`, joinRoom);
 
 // Messages
-router.post(`/${PREFIX}/message`, message);
+// router.post(`/${PREFIX}/message`, message);
 
 router.use('*', (req, res, next) => {
     return res.status(404).json('Not found!!!!');
