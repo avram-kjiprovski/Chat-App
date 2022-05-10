@@ -1,25 +1,26 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { SERVER } from "./constants";
 import { Button } from "@mui/material";
 import { socket } from "./socket";
+import { appDetailsContext } from "../App";
 
 export const Chat = () => {
   const [message, setMessage] = useState("");
+  const [appDetails, setAppDetails] = useContext(appDetailsContext);
   
   const handleSendMessage = async () => {
 
     const data = {
       "eventName": "message",
-      room: "Room 1",
+      room: appDetails.selectedRoom_id,
       message: message,
-      _id: JSON.parse(localStorage.getItem("userDetails"))._id,
+      // _id: JSON.parse(localStorage.getItem("userDetails"))._id,
+      _id: appDetails.user_id,
     };
 
     socket.emit("message", data);
     setMessage("");
 
-    
-    
   };
 
   return (

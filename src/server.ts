@@ -47,16 +47,19 @@ export const io = new socketio(server, {
             io.on('connection', (socket) => {
                 Logger.info('Socket connected');
                 socket.emit('message', 'Welcome to the chat');
-                
-                socket.on('hello', (data) => {
-                    console.log('Hello', data);
+
+                socket.on('joinRoom', async (room_id) => {
+                    await socket.join(room_id);
+                    Logger.info(`Socket ${socket.id} joined room ${room_id}`);
+                    
+                    socket.to(room_id).emit('update', 'successfully joined!')
+
                 })
 
                 socket.on('message', (data) => {
-                    console.log('Message: ', data);
-                    
-                    socket.join(data.room);
-                    socket.to(data.room).emit('message', data.message);
+                    Logger.info(`Socket ${socket.id} sent message ${data}`);
+
+                    socket.to(data.room).emit('update', data.message);
                 })
                 
                 

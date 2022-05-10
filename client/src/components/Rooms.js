@@ -2,6 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { appDetailsContext } from "../App";
 import { SERVER } from "./constants";
 import { Button } from "@mui/material";
+import { socket } from "./socket";
 
 
 export const Rooms = () => {
@@ -30,6 +31,9 @@ export const Rooms = () => {
     });
 
     const data = await res.json();
+    setAppDetails({
+      
+    })
     // console.log(data);
   };
 
@@ -37,6 +41,9 @@ export const Rooms = () => {
     console.log("selecting room: ", room._id);
     setSelectedRoom(room._id);
     localStorage.setItem("selectedRoom", room._id);
+    setAppDetails({ ...appDetails, selectedRoom_id: room._id });
+
+    socket.emit("joinRoom", room._id);
   }
 
   const handleCreateRoom = async (rooms) => {

@@ -22,6 +22,7 @@ export const ChatApp = () => {
 
     await localStorage.setItem("rooms", JSON.stringify(data));
     await localStorage.setItem("selectedRoom", data[0]._id);
+    
   };
 
   useEffect(() => {
@@ -30,14 +31,19 @@ export const ChatApp = () => {
       setAppDetails({
         username: JSON.parse(localStorage.getItem("userDetails")).username,
         user_id: JSON.parse(localStorage.getItem("userDetails"))._id,
-        selectedRoom_id: JSON.parse(localStorage.getItem("rooms"))[0]._id,
+        selectedRoom_id: (JSON.parse(localStorage.getItem("rooms"))[0]._id || ""),
         rooms: JSON.parse(localStorage.getItem("rooms")),
       });
     }
     console.log("ChatApp: ", appDetails);
   }, [appDetails]);
 
+      socket.on("update", (msg) => {
+        console.log(msg);
+      });
+
   if (appDetails.username != "") {
+    
     socket.on("connect", () => {
       // send socket request to get room data
       socket.emit("getRooms", (data) => {
@@ -45,9 +51,15 @@ export const ChatApp = () => {
       });
     });
     
-    socket.on("message", (msg) => {
+    socket.on("update", (msg) => {
       console.log(msg);
     });
+
+    socket.on('message', data => {
+      console.log(data);
+    })
+
+    
   }
 
   return (
