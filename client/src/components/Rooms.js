@@ -45,17 +45,36 @@ export const Rooms = () => {
 
     }
     
-
-    
   };
 
-  const handleSelectRoom = (room) => {
+  const handleSelectRoom = async (room) => {
+
     console.log("selecting room: ", room._id);
+
     setSelectedRoom(room._id);
     localStorage.setItem("selectedRoom", room._id);
     setAppDetails({ ...appDetails, selectedRoom_id: room._id });
 
     socket.emit("joinRoom", room._id);
+
+    const res_msg = await fetch(`${SERVER}/rooms/${room._id}/messages`, {
+      method: "GET",
+      withcredentials: true,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        }
+    })
+
+    const msg = await res_msg.json();
+    
+    console.log('msg: ', msg)
+
+    setAppDetails({
+      ...appDetails,
+      messages: msg.messages,
+    });
+    
   }
 
   const handleCreateRoom = async (rooms) => {
@@ -73,6 +92,7 @@ export const Rooms = () => {
     console.log(data);
 
     setRooms(data);
+    
   };
 
   return (

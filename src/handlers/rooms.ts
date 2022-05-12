@@ -1,5 +1,6 @@
 import Room from '../models/Room';
 import User from '../models/User';
+import Message from '../models/Message';
 import { decodeToken } from '../middlewares/jwt';
 import Logger from '@/logger/logger';
 
@@ -35,7 +36,9 @@ export const getRooms = async (req, res) => {
         });
 
         if(user.username == decoded.username) {
-            return res.status(200).json(await Room.find({}));
+            const rooms = await (await Room.find({}));
+
+            return res.status(200).json(rooms);
         }
 
         return res.status(401).json('Unauthorized');

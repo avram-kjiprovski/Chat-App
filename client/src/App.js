@@ -16,6 +16,7 @@ const App = () => {
     user_id: '',
     selectedRoom_id: '',
     rooms: [],
+    messages: [],
   });
   
   return (

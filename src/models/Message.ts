@@ -9,6 +9,10 @@ const messageSchema = new mongoose.Schema({
         createdAt: {
             type: Date,
             default: Date.now
+        },
+        room_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Room'
         }
     });
 

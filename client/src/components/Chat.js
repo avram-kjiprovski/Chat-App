@@ -9,12 +9,18 @@ export const Chat = () => {
   const [appDetails, setAppDetails] = useContext(appDetailsContext);
   const [messages, setMessages] = useState([]);
 
+
   useEffect( () => {
     if(appDetails && appDetails.rooms.find(room => room._id === appDetails.selectedRoom_id) != undefined){
       setMessages(
-        appDetails.rooms.find(room => room._id === appDetails.selectedRoom_id).messages
+        appDetails.messages
       )
     }
+
+    // if(appDetails.selectedRoom_id){
+    //   setMessages(appDetails.messages);
+    // }
+
   }, [appDetails]);
 
   const handleSendMessage = async () => {
@@ -24,7 +30,6 @@ export const Chat = () => {
       message: message,
       _id: appDetails.user_id,
     };
-
     socket.emit("message", data);
     setMessage("");
   };
@@ -39,12 +44,14 @@ export const Chat = () => {
         {/* Od tuka mapping */}
         {
           // if messages is not empty then map through it
-          messages.length > 0 ?
-          messages.map(message => {
+          messages ?
+          messages.map((message, index) => {
             return (
-              <div className={`${message.sentBy === appDetails.user_id ? 'Chat-My-Message' : 'Chat-Message'} Message`}>
+              // <div key={appDetails.user_id+index} className={`${message.sentBy === appDetails.user_id ? 'Chat-My-Message' : 'Chat-Message'} Message`}>
+              <div key={appDetails.user_id+index} className={`Chat-My-Message Message`}>
                 <div className="Message-User">
-                  <p>{message.content}</p>
+                  <p>{message}</p>
+                  {/* <p>{message}</p> */}
                 </div>
               </div>
               );

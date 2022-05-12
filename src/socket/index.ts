@@ -1,24 +1,40 @@
-import {io} from '../server'
-import {decodeToken, jwtMiddleware} from '../middlewares/jwt'
-// this code is not being used because we are using socket.io
-// but in another file lmao
+import { io } from "../server";
+import { decodeToken, jwtMiddleware } from "../middlewares/jwt";
+import { writeMessageToDB } from "../handlers/messages";
+import Logger from "../logger/logger";
 
+// Socket.io
 io.use(async (socket, next) => {
-    console.log('Socket middleware');
-    const decoded: Object | any = await decodeToken(socket.handshake.headers.cookie.split('=')[1]);
+  Logger.info("Socket checking token ");
+  if (typeof socket.handshake.headers.cookie === "string") {
+    const decoded: Object | any = await decodeToken(
+      socket.handshake.headers.cookie.split("=")[1]
+    );
 
-    if(decoded){
-        next();
+    if (decoded) {
+      next();
     } else {
-        next(new Error('Authentication error'));
+      next(new Error("Authentication error"));
     }
+  }
+});
 
+io.on("connection", (socket) => {
+  Logger.info("Socket connected");
+  socket.emit("message", "Welcome to the chat");
 
-})
+  socket.on("joinRoom", async (room_id) => {
+    await socket.join(room_id);
+    Logger.info(`Socket ${socket.id} joined room ${room_id}`);
 
-io.on('connection', (socket) => {   
+    socket.to(room_id).emit("update", "successfully joined!");
+  });
 
-    console.log('Socket middleware');
-    socket.emit('message', 'Welcome to the chat');
+  socket.on("message", async (data) => {
+    Logger.info(`Socket ${socket.id} sent message ${data}`);
 
-})
+    await socket.to(data.room).emit("update", data.message);
+    const handlerReturn = await writeMessageToDB(data);
+    console.log(handlerReturn);
+  });
+});
