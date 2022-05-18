@@ -29,7 +29,13 @@ export const ChatApp = () => {
   }, []);
 
   useEffect(() => {
-    
+        socket.on("update", async (message) => {
+          console.log("Socket update received");
+          // console.log("socket connect-update", message);
+          await handleMessageUpdate(message);
+        });
+
+        return () => socket.off('update', handleMessageUpdate)
   }, [appDetails]);
 
   // SOCKETIO
@@ -40,11 +46,7 @@ export const ChatApp = () => {
       console.log("socket connect-getRooms: ", data);
     });
 
-    socket.on("update", async (message) => {
-      console.log('Socket update received');
-      // console.log("socket connect-update", message);
-      await handleMessageUpdate(message);
-    });
+
 
     socket.on("message", (data) => {
       console.log("socket connect-message", data);
