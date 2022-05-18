@@ -30,7 +30,7 @@ export const ChatApp = () => {
 
   useEffect(() => {
     
-  }, [appDetails.messages]);
+  }, [appDetails]);
 
   // SOCKETIO
   // CLIENT
@@ -146,16 +146,21 @@ export const ChatApp = () => {
     }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     const data = {
       'eventName': "message",
       room_id: appDetails.selectedRoom_id,
       content: message,
       sentBy: appDetails.user_id,
-
     };
-    socket.emit("message", data);
+    await socket.emit("message", data);
     setMessage("");
+
+    data['_id'] = v4()
+    const newAppDetails = appDetails
+    newAppDetails.messages.push(data)
+
+    setAppDetails(newAppDetails);
   };
 
   return (
