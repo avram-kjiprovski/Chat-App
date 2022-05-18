@@ -28,6 +28,7 @@
   margin: 5px;
   padding: 5px;
   width: auto;
+  max-width: 70ch;
 }
 
 .Chat-My-Message{

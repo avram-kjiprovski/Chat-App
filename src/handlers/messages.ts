@@ -3,28 +3,23 @@ import User from '../models/User';
 import Room from '@/models/Room';
 import {io} from '../server'
 import { decodeToken } from '@/middlewares/jwt';
+import Logger from '@/logger/logger';
 
+// WEBSOCKETS API - SOCKETIO
 export const writeMessageToDB = async (data) => {
-    // const data = {
-    //     eventName: "message",
-    //     room: room_id,
-    //     message: message,
-    //     _id: user_id,
-    //   };
 
-    try { // let's hope this works
-    
-        const message = new Message({
-            content: data.message,
-            sentBy: data._id,
-            createdAt: new Date(),
-            room_id: data.room
+    try {
+        // console.log('writeMessageToDB: ', data.content, data.sentBy, data.createdAt, data.room_id);
+        
+        const message = await Message.create({
+            content: data.content,
+            sentBy: data.sentBy,
+            createdAt: data.createdAt,
+            room_id: data.room_id
         });
-
-        await message.save();
     
         const room = await Room.findOne({
-            _id: data.room
+            _id: data.room_id
         })
     
         room.messages.push(message);
@@ -33,11 +28,13 @@ export const writeMessageToDB = async (data) => {
     
         return true;   // why am I returning true?
     } catch (error) {
-        return error
+        Logger.error('Write message to DB error: ', error);
+        return false;
     }
 
 }
 
+// REST API - EXPRESS
 export const getMessages = async (req, res) => {
     const decoded: Object | any = decodeToken(req.cookies.token);
 

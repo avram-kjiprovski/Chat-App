@@ -13,7 +13,7 @@ router.post(`/${PREFIX}/login`, loginUser);
 router.post(`/${PREFIX}/register`, createUser);
 
 // Rooms
-router.post(`/${PREFIX}/createRoom`, createRoom);
+router.get(`/${PREFIX}/createRoom`, createRoom);
 router.get(`/${PREFIX}/rooms`, getRooms);
 router.get(`/${PREFIX}/rooms/:room_id/join`, joinRoom);
 
