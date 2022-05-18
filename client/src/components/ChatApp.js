@@ -4,9 +4,7 @@ import { socket } from "./socket";
 import { SERVER } from "./constants";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import {v4} from 'uuid';
-
-
+import { v4 } from "uuid";
 
 export const ChatApp = () => {
   // Context
@@ -20,49 +18,50 @@ export const ChatApp = () => {
 
   // on first render, get rooms
   useEffect(() => {
-    if(appDetails._id === '' || appDetails.username === ''){
-      navigate('/')
+    if (appDetails._id === "" || appDetails.username === "") {
+      navigate("/");
     }
     getMessages(appDetails.selectedRoom_id); // I want this only to execute on first load
     // getRooms();
     // setLocal();
+
+    socket.on("connect", () => {
+      console.log("I have connected.");
+      // send socket request to get room data
+      // this is to be a possible socketio substitute for getting room data
+      // obviously it's not implemented yet here or in BE
+      //  socket.emit("getRooms", (data) => {
+      //    console.log("socket connect-getRooms: ", data);
+      //  });
+      //  socket.on("message", (data) => {
+      //    console.log("socket connect-message", data);
+      //  });
+    });
   }, []);
 
   useEffect(() => {
-        socket.on("update", async (message) => {
-          console.log("Socket update received");
-          // console.log("socket connect-update", message);
-          await handleMessageUpdate(message);
-        });
+    socket.on("update", async (message) => {
+      console.log("Socket update received");
+      // console.log("socket connect-update", message);
+      await handleMessageUpdate(message);
+    });
 
-        return () => socket.off('update', handleMessageUpdate)
+    return () => socket.off("update", handleMessageUpdate);
   }, [appDetails]);
 
   // SOCKETIO
   // CLIENT
-  socket.on("connect", () => {
-    // send socket request to get room data
-    socket.emit("getRooms", (data) => {
-      console.log("socket connect-getRooms: ", data);
-    });
-
-
-
-    socket.on("message", (data) => {
-      console.log("socket connect-message", data);
-    });
-  });
 
   const handleMessageUpdate = async (message) => {
-    message['_id'] = v4();
-    const newMessages = appDetails.messages
-    newMessages.push(message)
+    message["_id"] = v4();
+    const newMessages = appDetails.messages;
+    newMessages.push(message);
 
     setAppDetails({
       ...appDetails,
-      messages: newMessages
-    })
-  }
+      messages: newMessages,
+    });
+  };
 
   const getMessages = async (room_id) => {
     const response = await fetch(`${SERVER}/rooms/${room_id}/messages`, {
@@ -108,6 +107,7 @@ export const ChatApp = () => {
     });
   };
 
+  // [] - Make some kind of solution here or on BE for updating rooms live when a new room is created
   const handleCreateRoom = async () => {
     const res = await fetch(`${SERVER}/createRoom`, {
       method: "GET",
@@ -140,17 +140,16 @@ export const ChatApp = () => {
     const room = await res.json();
 
     if (res.status === 200) {
-
       setAppDetails({
         ...appDetails,
-        selectedRoom_id: room._id
+        selectedRoom_id: room._id,
       });
     }
   };
 
   const handleSendMessage = async () => {
     const data = {
-      'eventName': "message",
+      eventName: "message",
       room_id: appDetails.selectedRoom_id,
       content: message,
       sentBy: appDetails.user_id,
@@ -158,9 +157,9 @@ export const ChatApp = () => {
     await socket.emit("message", data);
     setMessage("");
 
-    data['_id'] = v4()
-    const newAppDetails = appDetails
-    newAppDetails.messages.push(data)
+    data["_id"] = v4();
+    const newAppDetails = appDetails;
+    newAppDetails.messages.push(data);
 
     setAppDetails(newAppDetails);
   };

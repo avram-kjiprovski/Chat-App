@@ -48,14 +48,13 @@ export const io = new socketio(server, {
 
     io.on("connection", (socket) => {
       Logger.info("Socket connected");
-      socket.emit("message", "Welcome to the chat");
+      // socket.emit("message", "Welcome to the chat");
 
       // ON JOIN ROOM JOIN SAID SOCKET TO SAID ROOM
       socket.on("joinRoom", async (room_id) => {
         await socket.join(room_id);
         Logger.info(`Socket ${socket.id} joined room ${room_id}`);
-
-        socket.to(room_id).emit("update", "successfully joined!");
+        
       });
 
       // ON MESSAGE: UPDATE EVERYONE ELSE
