@@ -3,13 +3,12 @@ import User from '../models/User';
 import Room from '@/models/Room';
 import { decodeToken } from '@/middlewares/jwt';
 import Logger from '@/logger/logger';
-import { Request, Response, IMessage} from '../interfaces/';
+import { Request, Response, IMessage, IUser} from '../interfaces/';
 
 // WEBSOCKETS API - SOCKETIO
 export const writeMessageToDB = async (data: IMessage) => {
-
     try {
-        const message = await Message.create({
+        const message:IMessage = await Message.create({
             content: data.content,
             sentBy: data.sentBy,
             createdAt: data.createdAt,
@@ -37,7 +36,7 @@ export const getMessages = async (req: Request, res: Response) => {
 
     try {
         // check if user is really them
-        const user = await User.findOne({
+        const user:IUser = await User.findOne({
             username: decoded.username
         });
 
@@ -46,7 +45,7 @@ export const getMessages = async (req: Request, res: Response) => {
                 _id: req.params.room_id
             });
 
-            const messages = await Message.find({
+            const messages: IMessage[] = await Message.find({
                 _id: {
                     $in: room.messages
                 }
