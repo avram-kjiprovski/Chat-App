@@ -14,7 +14,7 @@ Everything outside the 'client' directory is a backend, everything inside the 'c
 
 ## Additional information
 
-There is a .env file which isn't pushed on github which includes information for the following variables:
+At root directory there is a .env file which isn't pushed on github which includes information for the following variables:
 - MONGO_URI
 - PORT (i.e '8000')
 - LOG_LEVEL
