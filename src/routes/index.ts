@@ -2,7 +2,6 @@ import express from 'express';
 import { loginUser, createUser} from '../handlers/users';
 import { createRoom, getRooms, joinRoom } from '../handlers/rooms';
 import { getMessages } from '../handlers/messages';
-import { jwtMiddleware } from '@/middlewares/jwt';
 
 const router = express.Router();
 

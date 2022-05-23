@@ -38,6 +38,7 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", async (room_id) => {
     await socket.join(room_id);
     Logger.info(`Socket ${socket.id} joined room ${room_id}`);
+    // I may return a object of the room that the user has joined to make sure everything is up to date
   });
 
   // ON MESSAGE: UPDATE EVERYONE ELSE
@@ -51,7 +52,7 @@ io.on("connection", (socket) => {
       createdAt: new Date(),
       room_id: data.room_id,
     };
-
+    
     await socket.to(data.room_id).emit("update", newData);
     await writeMessageToDB(newData);
   });

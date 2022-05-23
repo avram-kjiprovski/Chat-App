@@ -6,7 +6,7 @@
   color: #282c34;
 }
 
-.Chat-Container{
+.Chat-Container {
   display: flex;
   justify-content: center;
   min-height: 99vh;
@@ -101,3 +101,7 @@
   /* looks ugly, fix later you doink */
 }
 
+.Chat-Messages {
+  overflow-y: scroll;
+  max-height: 94vh;
+}

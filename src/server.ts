@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
-import dbConnector from "./config";
+import {dbConnector} from "./config";
 import Logger from "./logger/logger";
-
 import { server, io } from './socket'
 
 const PORT = process.env.PORT;
@@ -13,6 +12,8 @@ const PORT = process.env.PORT;
     server.listen(PORT, () => {
       Logger.info(`Server started on port ${PORT}`);
     });
+
+    // io.listen(server);
 
   } catch (error) {
     Logger.error(error);

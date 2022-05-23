@@ -3,8 +3,10 @@ import User from "../models/User";
 import Message from "../models/Message";
 import { decodeToken } from "../middlewares/jwt";
 import Logger from "@/logger/logger";
+import {Request, Response} from 'express';
 
-export const createRoom = async (req, res) => {
+export const createRoom = async (req: Request, res: Response) => {
+  // to better this function, it needs to receive POST req in order to set room name from FE
   const decoded: Object | any = decodeToken(req.cookies.token);
 
   const user = await User.findOne({
@@ -13,6 +15,8 @@ export const createRoom = async (req, res) => {
 
   let rooms = await Room.find({});
 
+  // rooms names can be set by a user instead of automagically
+  // also, room names the way they are solved now can be duplicated... which isn't good
   const room = await Room.create({
     name: `Room ${rooms.length + 1}`, // ne gi broi sam, mongo ima funkcija za count na elementi, zemi go posledniot i dodaj 1
     createdBy: user._id,
@@ -24,7 +28,7 @@ export const createRoom = async (req, res) => {
   return res.status(200).json(rooms);
 };
 
-export const getRooms = async (req, res) => {
+export const getRooms = async (req: Request, res: Response) => {
   const decoded: Object | any = decodeToken(req.cookies.token);
 
   try {
@@ -71,7 +75,7 @@ export const getRooms = async (req, res) => {
   }
 };
 
-export const joinRoom = async (req, res) => {
+export const joinRoom = async (req: Request, res: Response) => {
   const decoded: Object | any = decodeToken(req.cookies.token);
   const room_id = req.params.room_id;
 

@@ -1,16 +1,14 @@
 import Message from '../models/Message';
 import User from '../models/User';
 import Room from '@/models/Room';
-import {io} from '../server'
 import { decodeToken } from '@/middlewares/jwt';
 import Logger from '@/logger/logger';
+import {Request, Response} from 'express';
 
 // WEBSOCKETS API - SOCKETIO
 export const writeMessageToDB = async (data) => {
 
     try {
-        // console.log('writeMessageToDB: ', data.content, data.sentBy, data.createdAt, data.room_id);
-        
         const message = await Message.create({
             content: data.content,
             sentBy: data.sentBy,
@@ -26,16 +24,15 @@ export const writeMessageToDB = async (data) => {
     
         await room.save();
     
-        return true;   // why am I returning true?
+        // return true;   // why am I returning boolean?
     } catch (error) {
         Logger.error('Write message to DB error: ', error);
-        return false;
+        // return false;
     }
-
 }
 
 // REST API - EXPRESS
-export const getMessages = async (req, res) => {
+export const getMessages = async (req: Request, res: Response) => {
     const decoded: Object | any = decodeToken(req.cookies.token);
 
     try {
