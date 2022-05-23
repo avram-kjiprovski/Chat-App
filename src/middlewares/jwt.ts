@@ -8,7 +8,7 @@ export const createToken = (username) => {
     return newToken;
 }
 
-export const decodeToken = (token) => {
+export const decodeToken = (token: string) => {
     return jwt.decode(token);
 }
 

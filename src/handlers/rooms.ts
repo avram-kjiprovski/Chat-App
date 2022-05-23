@@ -3,7 +3,7 @@ import User from "../models/User";
 import Message from "../models/Message";
 import { decodeToken } from "../middlewares/jwt";
 import Logger from "@/logger/logger";
-import {Request, Response} from 'express';
+import {Request, Response, IRoom, IUser} from '../interfaces/';
 
 export const createRoom = async (req: Request, res: Response) => {
   // to better this function, it needs to receive POST req in order to set room name from FE
@@ -57,7 +57,7 @@ export const getRooms = async (req: Request, res: Response) => {
       }
 
       // if no rooms, create one
-      const room = await Room.create({
+      const room:IRoom = await Room.create({
         name: `Room ${rooms.length + 1}`, // TODO: [] - find a better way to generate names, ideally by user input
         createdBy: user._id,
         messages: [],
@@ -77,10 +77,10 @@ export const getRooms = async (req: Request, res: Response) => {
 
 export const joinRoom = async (req: Request, res: Response) => {
   const decoded: Object | any = decodeToken(req.cookies.token);
-  const room_id = req.params.room_id;
+  const room_id:string = req.params.room_id;
 
   try {
-    const user = await User.findOne({
+    const user: IUser = await User.findOne({
       username: decoded.username,
     });
 

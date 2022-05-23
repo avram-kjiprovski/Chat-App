@@ -3,10 +3,10 @@ import User from '../models/User';
 import Room from '@/models/Room';
 import { decodeToken } from '@/middlewares/jwt';
 import Logger from '@/logger/logger';
-import {Request, Response} from 'express';
+import { Request, Response, IMessage} from '../interfaces/';
 
 // WEBSOCKETS API - SOCKETIO
-export const writeMessageToDB = async (data) => {
+export const writeMessageToDB = async (data: IMessage) => {
 
     try {
         const message = await Message.create({
