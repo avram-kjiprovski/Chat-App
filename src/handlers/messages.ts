@@ -6,7 +6,7 @@ import Logger from '@/logger/logger';
 import { Request, Response, IMessage, IUser} from '../interfaces/';
 
 // WEBSOCKETS API - SOCKETIO
-export const writeMessageToDB = async (data: IMessage) => {
+export const writeMessageToDB = async (data):Promise<void> => {
     try {
         const message:IMessage = await Message.create({
             content: data.content,
@@ -31,7 +31,7 @@ export const writeMessageToDB = async (data: IMessage) => {
 }
 
 // REST API - EXPRESS
-export const getMessages = async (req: Request, res: Response) => {
+export const getMessages = async (req: Request, res: Response):Promise<Response> => {
     const decoded: Object | any = decodeToken(req.cookies.token);
 
     try {

@@ -28,7 +28,7 @@ export const createRoom = async (req: Request, res: Response) => {
   return res.status(200).json(rooms);
 };
 
-export const getRooms = async (req: Request, res: Response) => {
+export const getRooms = async (req: Request, res: Response):Promise<Response> => {
   const decoded: Object | any = decodeToken(req.cookies.token);
 
   try {
@@ -58,7 +58,8 @@ export const getRooms = async (req: Request, res: Response) => {
 
       // if no rooms, create one
       const room:IRoom = await Room.create({
-        name: `Room ${rooms.length + 1}`, // TODO: [] - find a better way to generate names, ideally by user input
+        // TODO: [] - find a better way to generate room names, ideally by user input
+        name: `Room ${rooms.length + 1}`, 
         createdBy: user._id,
         messages: [],
         usersJoined: [user],
@@ -75,7 +76,7 @@ export const getRooms = async (req: Request, res: Response) => {
   }
 };
 
-export const joinRoom = async (req: Request, res: Response) => {
+export const joinRoom = async (req: Request, res: Response):Promise<Response> => {
   const decoded: Object | any = decodeToken(req.cookies.token);
   const room_id:string = req.params.room_id;
 
