@@ -1,110 +1,124 @@
-import bcrypt from 'bcrypt';
-import User from '../models/User';
-import { createToken } from '../middlewares/jwt';
-import { debug } from 'console';
+import bcrypt from "bcrypt";
+import User from "../models/User";
+import { HttpStatusCode } from "./status_codes";
+import {JWTService} from "@/middlewares/jwt";
 
 export const loginUser = async (req, res, next) => {
-    const userInfo = req.body;
+  const userInfo = req.body;
 
-    if(!userInfo.username || !userInfo.password) {
-        return res.status(400).json({
-            message: 'Missing username or password'
-        });
+  if (!userInfo.username || !userInfo.password) {
+    return res.status(HttpStatusCode.UNAUTHORIZED).json({
+      message: "Missing username or password",
+    });
+  }
+
+  try {
+    const userInDB = await User.findOne({
+      username: userInfo.username,
+    });
+
+    if (!userInDB)
+      return res.status(HttpStatusCode.UNAUTHORIZED).json("User not found");
+
+    const passwordComparison = await bcrypt.compare(
+      userInfo.password,
+      userInDB.password
+    );
+
+    if (passwordComparison) {
+      const jwtService = new JWTService();
+      const newToken = jwtService.createToken(userInfo.username);
+
+      const userToSend = {
+        username: userInDB.username,
+        _id: userInDB._id,
+      };
+
+      return res
+        .cookie("token", newToken, {
+          httpOnly: true,
+          maxAge: 10800000,
+        })
+        .status(HttpStatusCode.OK)
+        .json(userToSend);
+    } else {
+      return res.status(HttpStatusCode.UNAUTHORIZED).json("Wrong password");
     }
-
-    try {
-        const userInDB = await User.findOne({
-            username: userInfo.username,
-        });
-
-        if(!userInDB) return res.status(400).json('User not found');
-
-        const passwordComparison = await bcrypt.compare(
-            userInfo.password,
-            userInDB.password
-        )
-
-        if(passwordComparison){
-            const newToken = createToken(userInfo.username);
-
-            return res
-                .cookie('token', newToken, {
-                    httpOnly: true,
-                    maxAge: 10800000,
-                })
-                .status(200)                
-                .json(userInDB);
-        } else {
-            return res.status(401).json('Wrong password');
-        }
-    } catch (error) {
-        return res.status(500).json(error);
-    }
+  } catch (error) {
+    return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json(error);
+  }
 };
 
 export const createUser = async (req, res, next) => {
-    const userInfo = req.body;
+  const userInfo = req.body;
 
-    if(!userInfo.username || userInfo.username.length < 6){
-        return res.status(400).json({
-            message: 'Username must be at least 6 characters long'
-        });
-    }
+  if (!userInfo.username || userInfo.username.length < 6) {
+    return res.status(HttpStatusCode.UNAUTHORIZED).json({
+      message: "Username must be at least 6 characters long",
+    });
+  }
 
-    if(!userInfo.password || userInfo.password.length < 6) {
-        return res.status(400).json({
-            message: 'Password must be at least 6 characters long'
-        });
-    }
+  if (!userInfo.password || userInfo.password.length < 6) {
+    return res.status(HttpStatusCode.UNAUTHORIZED).json({
+      message: "Password must be at least 6 characters long",
+    });
+  }
 
-    try {
-        const existingUser = await User.findOne({
-            username: userInfo.username,
-        })
+  try {
+    const existingUser = await User.findOne({
+      username: userInfo.username,
+    });
 
-        if(existingUser) return res.status(400).json('Username already exists');
+    if (existingUser)
+      return res
+        .status(HttpStatusCode.UNAUTHORIZED)
+        .json("Username already exists");
 
-        const encryptedPassword = await bcrypt.hash(
-            userInfo.password,
-            parseInt(process.env.SALT_ROUNDS)
-        );
+    const encryptedPassword = await bcrypt.hash(
+      userInfo.password,
+      parseInt(process.env.SALT_ROUNDS)
+    );
 
-        const newUser = {
-            username: userInfo.username,
-            password: encryptedPassword
-        };
+    const newUser = {
+      username: userInfo.username,
+      password: encryptedPassword,
+    };
 
-        await User.create(newUser)
-        return res.status(201).json('User created');
-    } catch (error) {
-        return res.status(500).json(`Error: ${error}`);
-    }
-}
+    await User.create(newUser);
+    return res.status(HttpStatusCode.CREATED).json("User created");
+  } catch (error) {
+    return res
+      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+      .json(`Error: ${error}`);
+  }
+};
 
 export const userJoinRoom = async (req, res, next) => {
-    const { username, roomName } = req.body;
+  const { username, roomName } = req.body;
 
-    try {
-        const user = await User.findOne({
-            username
-        });
+  try {
+    const user = await User.findOne({
+      username,
+    });
 
-        if(!user) return res.status(400).json('You do not exist.');
+    if (!user)
+      return res.status(HttpStatusCode.UNAUTHORIZED).json("You do not exist.");
 
-        const room = await user.rooms.find(room => room.name === roomName);
+    const room = await user.rooms.find((room) => room.name === roomName);
 
-        if(!room) {
-            user.rooms.push({
-                name: roomName,
-                messages: []
-            });
-        }
-
-        await user.save();
-
-        return res.status(200).json('User joined room');
-    } catch (error) {
-        return res.status(500).json("Handler -> userJoinRoom: \n", error);
+    if (!room) {
+      user.rooms.push({
+        name: roomName,
+        messages: [],
+      });
     }
 
-}
+    await user.save();
+
+    return res.status(HttpStatusCode.OK).json("User joined room");
+  } catch (error) {
+    return res
+      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+      .json("Handler -> userJoinRoom: \n", error);
+  }
+};

@@ -1,7 +1,7 @@
-import express from 'express';
-import { loginUser, createUser} from '../handlers/users';
-import { createRoom, getRooms, joinRoom } from '../handlers/rooms';
-import { getMessages } from '../handlers/messages';
+import express from "express";
+import { loginUser, createUser } from "../handlers/users";
+import { createRoom, getRooms, joinRoom } from "../handlers/rooms";
+import { getMessages } from "../handlers/messages";
 
 const router = express.Router();
 
@@ -19,8 +19,8 @@ router.get(`/${PREFIX}/rooms/:room_id/join`, joinRoom);
 // Messages
 router.get(`/${PREFIX}/rooms/:room_id/messages`, getMessages);
 
-router.use('*', (req, res, next) => {
-    return res.status(404).json('Not found!!!!');
+router.use("*", (req, res, next) => {
+  return res.status(404).json("Not found!!!!");
 });
 
 export default router;

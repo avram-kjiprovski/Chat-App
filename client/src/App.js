@@ -14,7 +14,7 @@ const App = () => {
   const [appDetails, setAppDetails] = useState({
     username: '',
     user_id: '',
-    selectedRoom_id: '',
+    selected_room_id: '',
     rooms: [],
     messages: [],
   });

@@ -1,59 +1,38 @@
 import { useState, useEffect, useContext } from "react";
 import { appDetailsContext } from "../App";
 import { socket } from "./socket";
-import { SERVER } from "./constants";
+import { SERVER, HttpStatusCode } from "./constants";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { v4 } from "uuid";
 
 export const ChatApp = () => {
-  // Context
   const [appDetails, setAppDetails] = useContext(appDetailsContext);
 
-  // Navigation
   const navigate = useNavigate();
 
-  // State
   const [message, setMessage] = useState("");
 
-  // on first render, get rooms
   useEffect(() => {
     if (appDetails._id === "" || appDetails.username === "") {
       navigate("/");
     }
-    getMessages(appDetails.selectedRoom_id); // I want this only to execute on first load
-    // getRooms();
-    // setLocal();
+    getMessages(appDetails.selected_room_id);
 
     socket.on("connect", () => {
       console.log("I have connected.");
-      // send socket request to get room data
-      // this is to be a possible socketio substitute for getting room data
-      // obviously it's not implemented yet here or in BE
-      //  socket.emit("getRooms", (data) => {
-      //    console.log("socket connect-getRooms: ", data);
-      //  });
-      //  socket.on("message", (data) => {
-      //    console.log("socket connect-message", data);
-      //  });
     });
   }, []);
 
   useEffect(() => {
     socket.on("update", async (message) => {
       console.log("Socket update received");
-      // console.log("socket connect-update", message);
       await handleMessageUpdate(message);
     });
 
     return () => socket.off("update", handleMessageUpdate);
   }, [appDetails]);
 
-  // SOCKETIO
-  // CLIENT
-
   const handleMessageUpdate = async (message) => {
-    message["_id"] = v4();
     const newMessages = appDetails.messages;
     newMessages.push(message);
 
@@ -75,13 +54,13 @@ export const ChatApp = () => {
 
     const responseMessages = await response.json();
 
-    if (response.status === 200) {
+    if (response.status === HttpStatusCode.OK) {
       await setAppDetails({
         ...appDetails,
         messages: responseMessages,
       });
 
-      socket.emit("joinRoom", appDetails.selectedRoom_id);
+      socket.emit("joinRoom", appDetails.selected_room_id);
     }
   };
 
@@ -102,7 +81,7 @@ export const ChatApp = () => {
 
     setAppDetails({
       ...appDetails,
-      selectedRoom_id: room_id,
+      selected_room_id: room_id,
       messages: roomMessages,
     });
   };
@@ -139,10 +118,10 @@ export const ChatApp = () => {
 
     const room = await res.json();
 
-    if (res.status === 200) {
+    if (res.status === HttpStatusCode.OK) {
       setAppDetails({
         ...appDetails,
-        selectedRoom_id: room._id,
+        selected_room_id: room._id,
       });
     }
   };
@@ -150,14 +129,14 @@ export const ChatApp = () => {
   const handleSendMessage = async () => {
     const data = {
       eventName: "message",
-      room_id: appDetails.selectedRoom_id,
+      room_id: appDetails.selected_room_id,
       content: message,
       sentBy: appDetails.user_id,
     };
     await socket.emit("message", data);
     setMessage("");
 
-    data["_id"] = v4();
+    // data["_id"] = v4();
     const newAppDetails = appDetails;
     newAppDetails.messages.push(data);
 
@@ -166,8 +145,6 @@ export const ChatApp = () => {
 
   return (
     <div className="Chat-Container">
-      {/* <Rooms /> */}
-
       <div className="Rooms-Container">
         <div className="Title">
           <h3>Rooms</h3>
@@ -178,7 +155,7 @@ export const ChatApp = () => {
               return (
                 <div
                   className={`Room ${
-                    appDetails.selectedRoom_id === room._id ? "selected" : ""
+                    appDetails.selected_room_id === room._id ? "selected" : ""
                   }`}
                   key={room._id}
                   onClick={() => {
@@ -214,14 +191,12 @@ export const ChatApp = () => {
         </div>
       </div>
 
-      {/* <Chat /> */}
       <div className="Chat-Box">
         <div className="Title">
           <h3>Chat</h3>
         </div>
 
         <div className="Chat-Messages">
-          {/* Od tuka mapping */}
           {appDetails.messages ? (
             appDetails.messages.map((message, index) => {
               return (

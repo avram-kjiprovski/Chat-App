@@ -17,7 +17,7 @@ export const Login = () => {
       const [userResponse, rooms] = await Promise.all([
         fetch(`${SERVER}/login`, {
           // TODO:
-          // [] change backend not to send back any sort of password version
+          // [X] change backend not to send back any sort of password version
           method: "POST",
           withcredentials: true,
           credentials: "include",
@@ -54,13 +54,11 @@ export const Login = () => {
           if(room.usersJoined.includes(userData._id))
           return userData._id
         })
-        // console.log("Rooms that include user: ", selectedRoom)
 
         await setAppDetails({
           username: userData.username,
           user_id: userData._id,
-          selectedRoom_id: selectedRoom[0]._id,
-          // selectedRoom_id: "",
+          selected_room_id: selectedRoom[0]._id,
           rooms: roomData,
           messages: [],
         });

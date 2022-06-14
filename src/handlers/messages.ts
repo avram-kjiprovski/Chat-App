@@ -1,62 +1,33 @@
-import Message from '../models/Message';
-import User from '../models/User';
-import Room from '@/models/Room';
-import { decodeToken } from '@/middlewares/jwt';
-import Logger from '@/logger/logger';
-import { Request, Response, IMessage, IUser} from '../interfaces/';
-
-// WEBSOCKETS API - SOCKETIO
-export const writeMessageToDB = async (data):Promise<void> => {
-    try {
-        const message:IMessage = await Message.create({
-            content: data.content,
-            sentBy: data.sentBy,
-            createdAt: data.createdAt,
-            room_id: data.room_id
-        });
-    
-        const room = await Room.findOne({
-            _id: data.room_id
-        })
-    
-        room.messages.push(message);
-    
-        await room.save();
-    
-        // return true;   // why am I returning boolean?
-    } catch (error) {
-        Logger.error('Write message to DB error: ', error);
-        // return false;
-    }
-}
+import Logger from "@/logger/logger";
+import { Request, Response, IMessage } from "../interfaces/";
+import { HttpStatusCode } from "./status_codes";
+import { MessageService } from "@/services/messageService";
+import { JWTService } from "@/middlewares/jwt";
 
 // REST API - EXPRESS
-export const getMessages = async (req: Request, res: Response):Promise<Response> => {
-    const decoded: Object | any = decodeToken(req.cookies.token);
+export const getMessages = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const jwtService = new JWTService();
+  const decoded: Object | any = jwtService.decodeToken(req.cookies.token);
 
-    try {
-        // check if user is really them
-        const user:IUser = await User.findOne({
-            username: decoded.username
-        });
+  try {
+    const messageService = new MessageService();
+    const messages: IMessage[] | number = await messageService.getMessages(
+      decoded,
+      req.params.room_id
+    );
 
-        if(user.username == decoded.username) {
-            const room = await Room.findOne({
-                _id: req.params.room_id
-            });
-
-            const messages: IMessage[] = await Message.find({
-                _id: {
-                    $in: room.messages
-                }
-            });
-
-            return res.status(200).json(messages);
-        }
-
-        return res.status(401).json('Unauthorized');
-
-    } catch (error) {
-        return res.status(500).json('Server error.');
+    if (typeof messages == "undefined") {
+      return res.status(HttpStatusCode.UNAUTHORIZED).json("Unauthorized");
     }
-}
+
+    return res.status(HttpStatusCode.OK).json(messages);
+  } catch (error) {
+    Logger.error("handler -> getMessages: ", error);
+    return res
+      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+      .json("Server error.");
+  }
+};

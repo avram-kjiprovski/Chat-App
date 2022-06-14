@@ -13,6 +13,11 @@ export class Mongoose {
         Logger.info("DB loaded");
       } catch (error) {
         Logger.error("DB failed load: ", error);
+        Logger.error('Trying to reconnect...');
+        setTimeout(() => {
+          this.connect();
+        }
+        , 5000);
       }
   }
 }

@@ -1,15 +1,16 @@
 import { Server as socketio } from "socket.io";
-import { decodeToken, jwtMiddleware } from "../middlewares/jwt";
-import { writeMessageToDB } from "../handlers/messages";
 import Logger from "../logger/logger";
 import http from "http";
 import app from "../app";
+import { v4 } from "uuid";
+import { MessageService } from "@/services/messageService";
+import { JWTService } from "@/middlewares/jwt";
 
 export const server = http.createServer(app);
 
 export const io = new socketio(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     allowedHeaders: ["cookies"],
     credentials: true,
   },
@@ -19,15 +20,14 @@ export const io = new socketio(server, {
 io.use(async (socket, next) => {
   Logger.info("Socket checking token ");
   if (typeof socket.handshake.headers.cookie === "string") {
-    const decoded: Object | any = await decodeToken(
-      socket.handshake.headers.cookie.split("=")[1]
-    );
+    
+  const jwtService = new JWTService();
+  const decoded: Object | any = await jwtService.decodeToken(
+    socket.handshake.headers.cookie.split("=")[1]
+  );
 
-    if (decoded) {
-      next();
-    } else {
-      next(new Error("Authentication error"));
-    }
+
+    decoded ? next() : next(new Error("Authentication error"));
   }
 });
 
@@ -52,8 +52,12 @@ io.on("connection", (socket) => {
       createdAt: new Date(),
       room_id: data.room_id,
     };
-    
-    await socket.to(data.room_id).emit("update", newData);
-    await writeMessageToDB(newData);
+
+    await socket.to(data.room_id).emit("update", {
+      ...newData,
+      message_id: v4(),
+    });
+    const messageService = new MessageService();
+    await messageService.writeMessage(newData);
   });
 });
