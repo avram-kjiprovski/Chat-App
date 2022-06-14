@@ -1,0 +1,54 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avram-kjiprovski/Chat-App.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avram-kjiprovski/Chat-App/issues"
+  },
+  "homepage": "https://github.com/avram-kjiprovski/Chat-App#readme",
+  "dependencies": {
+    "@types/jsonwebtoken": "^8.5.8",
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "jsdoc": "^3.6.10",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.11",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2",
+    "winston": "^3.7.2"
+  },
+  "devDependencies": {
+    "@types/agenda": "^2.0.9",
+    "@types/express": "^4.17.8",
+    "@types/jest": "^26.0.14",
+    "@types/lodash": "^4.14.161",
+    "@types/mongoose": "^5.7.36",
+    "@types/node": "^14.11.2",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
+    "eslint": "^7.9.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.1.2",
+    "ts-jest": "^26.4.0",
+    "ts-node": "^9.0.0",
+    "tsconfig-paths": "^3.11.0",
+    "tslint": "^5.20.1",
+    "typescript": "^4.0.3"
+  }
+}

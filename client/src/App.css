@@ -1,0 +1,107 @@
+.App {
+  display: grid;
+  border: 1px solid #282c34;
+  text-align: center;
+  background-color: aliceblue;
+  color: #282c34;
+}
+
+.Chat-Container {
+  display: flex;
+  justify-content: center;
+  min-height: 99vh;
+}
+
+.Chat-Box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 50%;
+  height: 100%;
+  border: 1px solid #bbc0ca;
+  border-top: none;
+  border-bottom: none;
+}
+
+.Message p {
+  display: block;
+  margin: 5px;
+  padding: 5px;
+  width: auto;
+  max-width: 70ch;
+}
+
+.Chat-My-Message{
+  background-color: rgb(155, 188, 216);
+  color: rgb(255, 255, 255);
+  text-align: end;
+  border-right: 1px solid #707888;
+}
+
+.Chat-Message{
+  text-align: left;
+  color: #282c34;
+  border-left: 1px solid #99a2b3;
+  background-color: #d8e1f1;
+}
+
+.Chat-New-Message{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 5px;
+  margin: 5px;
+  padding: 5px;
+}
+.Chat-New-Message input{
+  flex-grow: 1;
+  border: 1px solid #bbc0ca;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.Title {
+  background-color: #282c34;
+  color: #bbc0ca;
+  width: 100%;
+}
+
+.Rooms-Container {
+  display: flex;
+  flex-direction: column;
+  min-width: 20%;
+  border: 1px solid #bbc0ca;
+  border-top: none;
+  border-bottom: none;
+}
+
+.Room {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+  gap: 5px;
+  background-color: #d8e1f1;
+  border-bottom: 1px solid #bbc0ca;
+}
+
+.selected {
+  background-color: #81ade0;
+  box-shadow: inset 0 0 4px 1px #e7efff;
+}
+
+.timestamp {
+  color: #707888;
+  font-size: 0.8em;
+  margin-bottom: 0;
+}
+.Message p:last-of-type {
+  margin-top: 0;
+  margin-bottom: 5px;
+  /* looks ugly, fix later you doink */
+}
+
+.Chat-Messages {
+  overflow-y: scroll;
+  max-height: 94vh;
+}
